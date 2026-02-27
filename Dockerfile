@@ -1,23 +1,16 @@
-# Use an official Python runtime as a parent image
 FROM python:3.11-slim
 
-# Set the working directory in the container
-WORKDIR /code
+WORKDIR /app
 
-# Copy the requirements first to leverage Docker cache
+# Install libraries
 COPY requirements.txt .
-
-# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
-COPY ./app ./app
+# Copy everything into the /app folder
+COPY . .
 
-# Create the uploads folder inside the container
-RUN mkdir -p uploads
+# Ensure uploads exists
+RUN mkdir -p /app/uploads
 
-# Expose the port FastAPI runs on
-EXPOSE 8000
-
-# Command to run the application
+# Points to 'main.py' inside your local 'app' folder
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

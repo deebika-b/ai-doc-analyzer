@@ -1,13 +1,12 @@
-version: '3.8'
-
 services:
   web:
     build: .
     ports:
       - "8000:8000"
+    env_file:
+      - .env
     volumes:
-      - .:/code
-      - ./uploads:/code/uploads
-    environment:
-      - DATABASE_URL=sqlite:///./sql_app.db
+      - .:/app
+      - ./sql_app.db:/app/sql_app.db
+      - ./uploads:/app/uploads
     restart: always
