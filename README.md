@@ -25,4 +25,4 @@ Bash
 docker-compose up --build
 4. API Usage
 Once the container is running, access the interactive API documentation at:
-http://localhost:8000/docs
+
