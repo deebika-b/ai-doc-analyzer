@@ -25,4 +25,5 @@ Bash
 docker-compose up --build
 4. API Usage
 Once the container is running, access the interactive API documentation at:
+http://127.0.0.1:8000/docs
 
