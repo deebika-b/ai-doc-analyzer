@@ -1,29 +1,36 @@
-A professional, containerized backend service designed to automate document intelligence. This project allows users to securely upload PDF documents and receive intelligent, AI-generated summaries using Llama 3.
-Key Features:
-User Authentication: Secure registration and login using JWT (JSON Web Tokens) and bcrypt password hashing.
-Automated PDF Processing: Seamless text extraction from uploaded PDF files.
-AI Summarization: Integration with Groq (Llama 3.3-70b) to generate concise, 3-bullet point summaries.
-Containerized Architecture: Fully Dockerized setup for consistent "run anywhere" performance.
-Relational Database: Persistent storage for users and document metadata using SQLAlchemy and SQLite.
-Tech Stack:
-Language: Python 3.11+
-Framework: FastAPI
-AI Engine: Groq Cloud API (Llama 3)
-Database: SQLAlchemy ORM
-DevOps: Docker & Docker Compose
-Getting Started:
-1. Prerequisites
-Docker and Docker Desktop installed.
-A Groq API Key.
-2. Environment Setup
-Create a .env file in the root directory and add your credentials:
-Plaintext
-GROQ_API_KEY=########
-3. Installation
-Run the following command to build and start the entire stack:
-Bash
-docker-compose up --build
-4. API Usage
-Once the container is running, access the interactive API documentation at:
-http://127.0.0.1:8000/docs
+# AI-SaaS Document Analyser 🤖📄
 
+A modern, containerized Backend application designed for automated document analysis using Large Language Models (LLMs).
+
+## 🚀 Overview
+This project provides a scalable API to upload, process, and analyze documents using Generative AI. It leverages **Llama 3** to extract insights and **FastAPI** for high-performance data handling.
+
+## 🛠️ Tech Stack
+* **Language:** Python 3.10+
+* **Framework:** FastAPI (Asynchronous)
+* **AI Models:** Llama 3 via Groq API / LangChain
+* **Database:** PostgreSQL (SQLAlchemy ORM)
+* **Containerization:** Docker & Docker-Compose
+* **Authentication:** JWT (JSON Web Tokens) with bcrypt
+
+## ✨ Key Features
+* **AI Extraction:** Automatically extracts key metadata and summaries from uploaded text.
+* **Secure Auth:** Full User Sign-up/Login flow with encrypted passwords.
+* **Scalable Architecture:** Built with a clean separation of concerns (Models, Schemas, Routes).
+* **Dockerized:** Ready for deployment with a single command.
+
+## 🛠️ Installation & Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/deebika-b/ai-doc-analyzer.git](https://github.com/deebika-b/ai-doc-analyzer.git)
+   cd ai-doc-analyzer
+
+ 2. Run with Docker:
+  docker-compose up --build
+  The API will be available at http://localhost:8000
+ 3. Interactive Documentation:
+   Visit http://localhost:8000/docs to see the Swagger UI.
+
+Author: Deebika Bagavathiraj
+Focus: Backend Engineering | Generative AI | Cloud-Native Apps
