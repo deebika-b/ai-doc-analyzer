@@ -1,15 +1,15 @@
-# Environments
-venv/
+# Secrets
 .env
 
-# Python artifacts
-__pycache__/
-*.pyc
-
-# Database & Local Data
+# Database
 sql_app.db
-uploads/*
-!.gitkeep
+*.db
 
-# Mac-specific
-.DS_Store
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.pytest_cache/
+
+# Docker logs
+*.log
