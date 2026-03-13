@@ -1,73 +1,61 @@
-# 📑 AI Document Analyzer
+# 📄 AI-Powered SaaS Document Analyzer
 
-A full-stack AI application that allows users to upload PDF documents and receive intelligent summaries and insights using **Groq (Llama-3)**. Built with a focus on secure authentication and containerized deployment.
-
-
-
-## 🚀 Key Features
-* **User Authentication:** Secure Sign-up and Login using **OAuth2**, **JWT tokens**, and **Bcrypt** password hashing.
-* **PDF Processing:** Extracts text content from uploaded PDFs using `pypdf`.
-* **AI Insights:** Generates high-speed summaries via the **Groq Cloud API**.
-* **Persistent Storage:** Uses **SQLAlchemy** with SQLite to manage users and document metadata.
-* **Containerized:** Fully Dockerized for "one-command" setup.
+A full-stack SaaS prototype that allows users to upload PDF documents and receive intelligent summaries using the **Groq Llama 3.3 API**. Built with a focus on modern DevOps practices, including containerization and microservices architecture.
 
 ---
 
-## 🛠️ Tech Stack
-* **Frontend:** Streamlit
-* **Backend:** FastAPI (Python)
-* **Database:** SQLite + SQLAlchemy ORM
-* **AI Model:** Llama-3 (via Groq)
-* **DevOps:** Docker, Docker Compose
+## 🚀 Quick Start (For Recruiters)
 
----
+To get this project running in less than 2 minutes, follow these steps:
 
-## ⚙️ Installation & Setup
+### 1. Prerequisites
+* **Docker & Docker Compose** installed.
+* A **Groq API Key** (Get one at [console.groq.com](https://console.groq.com/)).
 
-### 1. Clone the Repository
-```bash
-git clone [https://github.com/deebika-b/ai-doc-analyzer.git](https://github.com/deebika-b/ai-doc-analyzer.git)
-cd ai-doc-analyzer
+### 2. Environment Setup
+Create a `.env` file in the root directory:
+```env
+GROQ_API_KEY=your_api_key_here
+SECRET_KEY=your_random_jwt_secret
 
-Configure Environment Variables
-
-**2.Create a .env file in the root directory:**
-
-Plaintext
-GROQ_API_KEY=your_groq_api_key_here
-SECRET_KEY=your_random_secret_key_for_jwt
-
-
-**3. Run with Docker 🐳**
-
-The easiest way to run the app is using Docker Compose. This starts both the Backend and Frontend automatically.
-
-Bash
+3. Launch the App
+Run the following command in your terminal:
 docker-compose up --build
 
-**📖 How to Use**
-OPEN YOUR BROWSER:
-Backend API: http://localhost:8000/docs (Swagger UI)
-Frontend UI: http://localhost:8501 (Streamlit).
+4. Access the Services
+Frontend (Streamlit): http://localhost:8501
 
-Register a new account.
+Backend API (FastAPI): http://localhost:8000/docs (Interactive Swagger UI)
 
-Login with your credentials.
+🛠️ Technical Stack:
+Layer	Technology
+Frontend	Streamlit (Python-based interactive UI)
+Backend	FastAPI (High-performance ASGI framework)
+AI Engine	Groq (Llama 3.3-70B Model)
+Database	SQLite (SQLAlchemy ORM)
+Authentication	JWT (JSON Web Tokens) & Bcrypt password hashing
+Deployment	Docker & Docker Compose
 
-Upload any PDF file.
+Key Features:
+Secure Authentication: User registration and login system with encrypted password storage.
 
-View the AI-generated summary of your document.
+PDF Extraction: Automated text extraction from uploaded PDF files using pypdf.
 
-**📁 Project Structure**
-main.py: FastAPI backend, database models, and AI logic.
+AI Summarization: Real-time processing via Groq's high-speed inference engine.
 
-app.py: Streamlit frontend and UI components.
+Microservices Architecture: Fully decoupled frontend and backend services communicating via a internal Docker network.
 
-requirements.txt: Python dependencies.
+Persistent Storage: Document metadata and AI summaries stored via SQLAlchemy.
 
-docker-compose.yml: Multi-container orchestration.
+📁 Project Structure
+├── app/
+│   ├── main.py          # FastAPI Backend (Routes, AI Logic, DB Models)
+│   └── __init__.py
+├── streamlit_app.py     # Streamlit Frontend (UI & API Integration)
+├── Dockerfile           # Multi-service build instructions
+├── docker-compose.yml   # Container orchestration
+├── requirements.txt     # Python dependencies
+└── .env                 # Environment variables (Excluded from Git)
 
-sql_app.db: (Auto-generated) SQLite database file.
-
-**👨‍💻 Developed By**
-Deebika B Full Stack Engineer | AI Enthusiast
+👨‍💻 Author
+Deebika Bagavathiraj
