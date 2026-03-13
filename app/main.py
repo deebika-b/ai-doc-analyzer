@@ -154,6 +154,7 @@ async def upload_document(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to process PDF: {str(e)}")
 
+
 @app.post("/summarize/{doc_id}")
 async def summarize_document(
     doc_id: int, 
@@ -167,17 +168,32 @@ async def summarize_document(
     try:
         chat_completion = client.chat.completions.create(
             messages=[
-                {"role": "system", "content": "You are a professional assistant that summarizes documents."},
-                {"role": "user", "content": f"Summarize:\n\n{doc.content[:6000]}"}
+                {
+                    "role": "system", 
+                    "content": (
+                        "STRICT FORMATTING RULE: Output EXACTLY 3 numbered bullet points. "
+                        "Do not include any introductory text, pleasantries, or conclusions. "
+                        "Each point must be a single, concise sentence. "
+                        "Format: \n1. [Point 1]\n2. [Point 2]\n3. [Point 3]"
+                    )
+                },
+                {
+                    "role": "user", 
+                   # "content": f"Summarize this text step-by-step:\n\n{doc.content[:6000]}"
+                    "content": f"Summarize the following text into exactly 3 points:\n\n{doc.content[:6000]}"
+                }
             ],
             model="llama-3.3-70b-versatile",
+            temperature=0.2, # Lowering temperature makes the output more focused and less "creative"
         )
         summary = chat_completion.choices[0].message.content
+        
         doc.summary = summary
         db.commit()
         return {"summary": summary}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI Summarization failed: {str(e)}")
+   
 
 if __name__ == "__main__":
     # Removed the trailing dot
