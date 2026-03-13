@@ -5,21 +5,18 @@ from typing import Optional
 
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware  # Necessary for Streamlit
 from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from pypdf import PdfReader
 from jose import JWTError, jwt
-
-# --- NEW: SECURITY IMPORTS FOR DAY 4 ---
 from dotenv import load_dotenv
 from groq import Groq
 
-# 1. LOAD ENVIRONMENT VARIABLES FROM .env
+# 1. LOAD ENVIRONMENT VARIABLES
 load_dotenv()
 
-# 2. CONFIGURATION
-# This fetches your Groq key and Secret key safely from the .env file
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 SECRET_KEY = os.getenv("SECRET_KEY", "your-fallback-secret-key")
 ALGORITHM = "HS256"
@@ -28,15 +25,13 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 # Initialize Groq Client
 client = Groq(api_key=GROQ_API_KEY)
 
-# Database Setup
+# 2. DATABASE SETUP
 SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
-# --- 3. DATABASE MODELS ---
+# 3. MODELS
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
@@ -53,17 +48,29 @@ class Document(Base):
 
 Base.metadata.create_all(bind=engine)
 
-# --- 4. SECURITY HELPERS (FIXED FOR PYTHON 3.14) ---
+# 4. FASTAPI APP SETUP
+app = FastAPI(title="AI SaaS Document Analyzer")
+
+# --- CORS MIDDLEWARE (CRITICAL) ---
+# This allows your Streamlit app (port 8501) to talk to this API (port 8000)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+# 5. SECURITY HELPERS
 def get_password_hash(password: str):
     pwd_bytes = password.encode('utf-8')
     salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(pwd_bytes, salt)
-    return hashed_password.decode('utf-8')
+    return bcrypt.hashpw(pwd_bytes, salt).decode('utf-8')
 
 def verify_password(plain_password: str, hashed_password: str):
-    password_byte_enc = plain_password.encode('utf-8')
-    hashed_password_enc = hashed_password.encode('utf-8')
-    return bcrypt.checkpw(password_byte_enc, hashed_password_enc)
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -71,12 +78,7 @@ def create_access_token(data: dict):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-# --- 5. APP & LOGIC ---
-app = FastAPI(title="AI SaaS Document Analyzer")
-
-if not os.path.exists("uploads"):
-    os.makedirs("uploads")
-
+# 6. DEPENDENCIES
 def get_db():
     db = SessionLocal()
     try:
@@ -98,15 +100,17 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise HTTPException(status_code=401, detail="Could not validate credentials")
 
 def extract_text(file_path: str):
-    reader = PdfReader(file_path)
-    text = ""
-    for page in reader.pages:
-        content = page.extract_text()
-        if content: text += content + "\n"
-    return text
+    try:
+        reader = PdfReader(file_path)
+        text = ""
+        for page in reader.pages:
+            content = page.extract_text()
+            if content: text += content + "\n"
+        return text
+    except Exception as e:
+        return f"Error extracting text: {e}"
 
-# --- 6. ENDPOINTS ---
-
+# 7. ENDPOINTS
 @app.post("/register")
 def register(email: str, password: str, db: Session = Depends(get_db)):
     user_exists = db.query(User).filter(User.email == email).first()
@@ -134,6 +138,9 @@ async def upload(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    if not os.path.exists("uploads"):
+        os.makedirs("uploads")
+        
     file_path = f"uploads/{file.filename}"
     with open(file_path, "wb") as buffer:
         buffer.write(await file.read())
@@ -151,22 +158,21 @@ async def summarize(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # Fetch document and verify ownership
     doc = db.query(Document).filter(Document.id == doc_id, Document.owner_id == current_user.id).first()
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
     
-    # REAL AI SUMMARIZATION
     try:
         completion = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
-                {"role": "system", "content": "You are a professional assistant. Summarize the text in 3 bullet points."},
+                {"role": "system", "content": "Summarize the following text in 3 bullet points."},
                 {"role": "user", "content": doc.content[:6000]}
             ]
         )
-        doc.summary = completion.choices[0].message.content
+        summary_text = completion.choices[0].message.content
+        doc.summary = summary_text
         db.commit()
-        return {"summary": doc.summary}
+        return {"summary": summary_text}
     except Exception as e:
         return {"error": f"AI failed: {str(e)}"}
