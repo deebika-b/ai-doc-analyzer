@@ -57,5 +57,12 @@ Persistent Storage: Document metadata and AI summaries stored via SQLAlchemy.
 ├── requirements.txt     # Python dependencies
 └── .env                 # Environment variables (Excluded from Git)
 
+# 📄 AI-Powered SaaS Document Analyzer
+
+![App Dashboard](assets/dashboard.png)
+
+## 🚀 Quick Start (For Recruiters)
+...
+
 👨‍💻 Author
 Deebika Bagavathiraj
