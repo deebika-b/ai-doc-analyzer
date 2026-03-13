@@ -59,7 +59,7 @@ Persistent Storage: Document metadata and AI summaries stored via SQLAlchemy.
 
 # 📄 AI-Powered SaaS Document Analyzer
 
-![App Dashboard](assets/dashboard.png)
+(dashboard.png)-------CHECK MY SCREENSHOT HOW IT WORKS!...
 
 ## 🚀 Quick Start (For Recruiters)
 ...
