@@ -3,6 +3,19 @@
 A full-stack SaaS prototype that allows users to upload PDF documents and receive intelligent summaries using the **Groq Llama 3.3 API**. Built with a focus on modern DevOps practices, including containerization and microservices architecture.
 
 ---
+_**Schnellstart (Quick Start)
+Stellen Sie sicher, dass Docker gestartet ist. Führen Sie dann die folgenden Befehle im Terminal aus: 
+
+Projekt-Ordner öffnen:
+cd ai-doc-analyzer
+
+Container bauen und starten:
+docker-compose up --build
+
+Anwendung öffnen:
+Öffnen Sie Ihren Browser unter: http://localhost:8501/
+
+Hinweis: Das Backend läuft auf Port 8000 und das Frontend auf Port 8501.**
 
 ## 🚀 Quick Start (For Recruiters)
 
